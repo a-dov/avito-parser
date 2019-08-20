@@ -16,6 +16,8 @@ message ParseResult {
     string title = 3;
     string description = 4;
     Contact contact = 5;
+    int32 price = 6;
+    string link = 7;
 }
 
 message ParseRequest {
