@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+enum Type {
+    AVITO = 0;
+}
+
+message Contact {
+    string name = 1;
+    string phone = 2;
+    string phoneImage = 3;
+}
+
+message ParseResult {
+    Type type = 1;
+    string id = 2;
+    string title = 3;
+    string description = 4;
+    Contact contact = 5;
+}
+
+message ParseRequest {
+    Type type = 1;
+    string query = 2;
+}
+
+service Parser {
+    rpc Parse (ParseRequest) returns (stream ParseResult) {
+    }
+}
