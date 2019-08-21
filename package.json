@@ -1,0 +1,23 @@
+{
+  "name": "tobelease-parser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "puppeteer": "^1.19.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/DmitryDorofeev/tobelease-parser.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/DmitryDorofeev/tobelease-parser/issues"
+  },
+  "homepage": "https://gitlab.com/DmitryDorofeev/tobelease-parser#readme"
+}
