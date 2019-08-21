@@ -53,8 +53,6 @@ module.exports = function parseUrl(call) {
       for (let i = 1; i <= 100; ++i) {
         await page.goto(url.replace('p=', 'p=' + i));
 
-        console.log('page:', url.replace('p=', 'p=' + i));
-
         const hrefs = await page.evaluate(() => {
           const anchors = document.querySelectorAll('.item-description-title-link');
           return [].map.call(anchors, a => a.href);
