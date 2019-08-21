@@ -1,11 +1,6 @@
 syntax = "proto3";
 
-option java_multiple_files = true;
-option java_package = "ru.tobelease";
-option java_outer_classname = "tobeleaseParser";
-option objc_class_prefix = "HLW";
-
-package tobelease_parser;
+package parser;
 
 enum Type {
     AVITO = 0;
@@ -33,5 +28,5 @@ message ParseRequest {
 }
 
 service Parser {
-    rpc Parse (ParseRequest) returns (stream ParseResult) {}
+    rpc parse (ParseRequest) returns (stream ParseResult) {}
 }

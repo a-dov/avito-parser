@@ -1,12 +1,5 @@
 const puppeteer = require('puppeteer');
 const { Cluster } = require('puppeteer-cluster');
-const URL = 'https://www.avito.ru/rossiya/gruzoviki_i_spetstehnika/ekskavatory/'; //TODO get URL from gRPC
-
-
-var PROTO_PATH = __dirname + './../protos/service.proto';
-var grpc = require('grpc');
-var protoLoader = require('@grpc/proto-loader');
-
 
 function processUrl(url) {
   const reg = /p=[0-9]+/;
@@ -20,10 +13,10 @@ function processUrl(url) {
   return url + '?p=';
 }
 
-function parseUrl(call) {
+module.exports = function parseUrl(call) {
   (async () => {
     const browser = await puppeteer.launch();
-    const url = processUrl(URL);
+    const url = processUrl(call.request.query);
 
     try {
       const cluster = await Cluster.launch({
@@ -44,7 +37,11 @@ function parseUrl(call) {
               const description = document.querySelector('.item-description-text p');
               const arr = [];
               arr.push(title.innerText, /*phoneImg ? phoneImg.src : 'Нет номера', */price ? price.getAttribute('content') : 'Цена не указана', description ? description.innerText : '');
-              return arr;
+              return {
+                title: title.innerText,
+                price: price ? price.getAttribute('content') : 'Цена не указана',
+                description: description ? description.innerText : '',
+              };
             });
             console.log(data);
             call.write(data);
@@ -80,26 +77,3 @@ function parseUrl(call) {
     }
   })().catch(err => console.error(err));
 }
-
-function main() {
-  var packageDefinition = protoLoader.loadSync(
-    PROTO_PATH,
-    {
-      keepCase: true,
-      longs: String,
-      enums: String,
-      defaults: true,
-      oneofs: true
-    });
-  var tobelease_parser = grpc.loadPackageDefinition(packageDefinition).tobelease_parser;
-
-  console.log('tobelease_parser.Parser:', tobelease_parser.Parser);
-  console.log('tobelease_parser.Parser.service:', tobelease_parser.Parser.service);
-
-  var server = new grpc.Server();
-  server.addService(tobelease_parser.Parser.service, { parseUrl: parseUrl });
-  server.bind('0.0.0.0:50051', grpc.ServerCredentials.createInsecure());
-  server.start();
-}
-
-main();
