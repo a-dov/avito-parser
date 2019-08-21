@@ -1,6 +1,12 @@
 const puppeteer = require('puppeteer');
 const { Cluster } = require('puppeteer-cluster');
-const URL = 'https://www.avito.ru/rossiya/gruzoviki_i_spetstehnika/ekskavatory/';
+const URL = 'https://www.avito.ru/rossiya/gruzoviki_i_spetstehnika/ekskavatory/'; //TODO get URL from gRPC
+
+
+var PROTO_PATH = __dirname + './../protos/service.proto';
+var grpc = require('grpc');
+var protoLoader = require('@grpc/proto-loader');
+
 
 function processUrl(url) {
   const reg = /p=[0-9]+/;
@@ -14,7 +20,7 @@ function processUrl(url) {
   return url + '?p=';
 }
 
-async function run() {
+function parseUrl(call) {
   (async () => {
     const browser = await puppeteer.launch();
     const url = processUrl(URL);
@@ -41,6 +47,7 @@ async function run() {
               return arr;
             });
             console.log(data);
+            call.write(data);
           });
       });
 
@@ -69,8 +76,30 @@ async function run() {
       console.error(e);
     } finally {
       await browser.close();
+      call.end();
     }
-  })();
+  })().catch(err => console.error(err));
 }
 
-run().catch(err => console.error(err));
+function main() {
+  var packageDefinition = protoLoader.loadSync(
+    PROTO_PATH,
+    {
+      keepCase: true,
+      longs: String,
+      enums: String,
+      defaults: true,
+      oneofs: true
+    });
+  var tobelease_parser = grpc.loadPackageDefinition(packageDefinition).tobelease_parser;
+
+  console.log('tobelease_parser.Parser:', tobelease_parser.Parser);
+  console.log('tobelease_parser.Parser.service:', tobelease_parser.Parser.service);
+
+  var server = new grpc.Server();
+  server.addService(tobelease_parser.Parser.service, { parseUrl: parseUrl });
+  server.bind('0.0.0.0:50051', grpc.ServerCredentials.createInsecure());
+  server.start();
+}
+
+main();
