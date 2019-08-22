@@ -14,7 +14,7 @@ let proto = grpc.loadPackageDefinition(
   })
 );
 
-function parse(call, callback) {
+function parse(call) {
   parseUrl(call);
 }
 

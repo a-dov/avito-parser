@@ -35,8 +35,6 @@ module.exports = function parseUrl(call) {
               const title = document.querySelector('.title-info-title-text');
               const price = document.querySelector('.js-item-price');
               const description = document.querySelector('.item-description-text p');
-              const arr = [];
-              arr.push(title.innerText, /*phoneImg ? phoneImg.src : 'Нет номера', */price ? price.getAttribute('content') : 'Цена не указана', description ? description.innerText : '');
               return {
                 title: title.innerText,
                 price: price ? price.getAttribute('content') : 'Цена не указана',
