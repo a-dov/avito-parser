@@ -24,13 +24,14 @@ module.exports = function parseUrl(call) {
         maxConcurrency: 3,
       });
 
-      await cluster.task(async ({ page, data: url }) => {
-        await page.goto(url);
+      await cluster.task(async ({ page, data }) => {
+        await page.goto(data.url);
         await page.tap('.js-item-phone-button_card');
         await page
           .waitForSelector('.item-popup .js-item-phone-big-number img')
           .then(async () => {
             const data = await page.evaluate(() => {
+              const sellerProfileLink = document.querySelector('.js-seller-info-name a');
               const phoneImg = document.querySelector('.item-popup .js-item-phone-big-number img');
               const title = document.querySelector('.title-info-title-text');
               const price = document.querySelector('.js-item-price');
@@ -39,8 +40,11 @@ module.exports = function parseUrl(call) {
                 title: title.innerText,
                 price: price ? price.getAttribute('content') : 'Цена не указана',
                 description: description ? description.innerText : '',
+                profileLink: sellerProfileLink ? sellerProfileLink.href : '',
+                name: sellerProfileLink ? sellerProfileLink.innerText : '',
+                phoneImage: phoneImg ? phoneImg.src : '',
               };
-            });
+            }).catch(e => {console.error(e)}) ;
             console.log(data);
             call.write(data);
           });
@@ -58,8 +62,10 @@ module.exports = function parseUrl(call) {
 
         if (!hrefs) break;
 
-        for (let i = 0; i < 1; ++i) {
-          cluster.queue(hrefs[i]);
+        for (let i = 0; i < hrefs.length; ++i) {
+          cluster.queue({
+            url: hrefs[i],
+          });
         }
       }
 
@@ -72,4 +78,4 @@ module.exports = function parseUrl(call) {
       call.end();
     }
   })().catch(err => console.error(err));
-}
+};

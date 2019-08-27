@@ -8,8 +8,7 @@ enum Type {
 
 message Contact {
     string name = 1;
-    string phone = 2;
-    string phoneImage = 3;
+    string phoneImage = 2;
 }
 
 message ParseResult {
@@ -20,6 +19,7 @@ message ParseResult {
     Contact contact = 5;
     string price = 6;
     string link = 7;
+    string profileLink = 8;
 }
 
 message ParseRequest {

@@ -17,7 +17,7 @@ let client = new proto.parser.Parser(
 );
 
 function getData() {
-  let channel = client.parse({ query: 'https://www.avito.ru/rossiya/velosipedy?cd=1' });
+  let channel = client.parse({ query: 'https://www.avito.ru/moskva_i_mo/predlozheniya_uslug?q=%D1%8D%D0%BA%D1%81%D0%BA%D0%B0%D0%B2%D0%B0%D1%82%D0%BE%D1%80' });
 
   channel.on("data", (message) => console.log(message));
 }
