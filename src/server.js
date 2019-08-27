@@ -1,10 +1,13 @@
-var grpc = require('grpc');
-var parseUrl = require('./functions');
-var protoLoader = require('@grpc/proto-loader');
+const grpc = require('grpc');
+const protoLoader = require('@grpc/proto-loader');
+const parseUrl = require('./functions');
+const { start } = require('./mydb');
+
+const db = start();
 
 const server = new grpc.Server();
 
-let proto = grpc.loadPackageDefinition(
+const proto = grpc.loadPackageDefinition(
   protoLoader.loadSync("../protos/service.proto", {
     keepCase: true,
     longs: String,
@@ -15,7 +18,7 @@ let proto = grpc.loadPackageDefinition(
 );
 
 function parse(call) {
-  parseUrl(call);
+  parseUrl(call, db);
 }
 
 server.addService(proto.parser.Parser.service, { parse: parse });

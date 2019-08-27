@@ -13,7 +13,7 @@ function processUrl(url) {
   return url + '?p=';
 }
 
-module.exports = function parseUrl(call) {
+module.exports = function parseUrl(call, db) {
   (async () => {
     const browser = await puppeteer.launch();
     const url = processUrl(call.request.query);
@@ -42,11 +42,20 @@ module.exports = function parseUrl(call) {
                 description: description ? description.innerText : '',
                 profileLink: sellerProfileLink ? sellerProfileLink.href : '',
                 name: sellerProfileLink ? sellerProfileLink.innerText : '',
+                sellerProfileLink: sellerProfileLink ? sellerProfileLink.href : '',
                 phoneImage: phoneImg ? phoneImg.src : '',
               };
             }).catch(e => {console.error(e)}) ;
+
             console.log(data);
-            call.write(data);
+
+            if (!db.has(data.sellerProfileLink)) {
+              db.set(data.sellerProfileLink, true);
+              db.write();
+              call.write(data);
+            } else {
+              console.log('User lready parsed');
+            }
           });
       });
 
