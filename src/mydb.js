@@ -27,7 +27,6 @@ module.exports = {
           if (err) console.error('Something with your FS');
         });
       };
-      console.log('DB parsed:', obj.content);
       return obj;
     } catch(err) {
       console.error(err)

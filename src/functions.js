@@ -42,19 +42,14 @@ module.exports = function parseUrl(call, db) {
                 description: description ? description.innerText : '',
                 profileLink: sellerProfileLink ? sellerProfileLink.href : '',
                 name: sellerProfileLink ? sellerProfileLink.innerText : '',
-                sellerProfileLink: sellerProfileLink ? sellerProfileLink.href : '',
                 phoneImage: phoneImg ? phoneImg.src : '',
               };
-            }).catch(e => {console.error(e)}) ;
+            }).catch(e => {console.error(e)});
 
-            console.log(data);
-
-            if (!db.has(data.sellerProfileLink)) {
-              db.set(data.sellerProfileLink, true);
+            if (!db.has(data.profileLink)) {
+              db.set(data.profileLink, true);
               db.write();
               call.write(data);
-            } else {
-              console.log('User lready parsed');
             }
           });
       });
@@ -72,6 +67,7 @@ module.exports = function parseUrl(call, db) {
         if (!hrefs) break;
 
         for (let i = 0; i < hrefs.length; ++i) {
+          // куеуе
           cluster.queue({
             url: hrefs[i],
           });
