@@ -8,7 +8,7 @@ const db = start();
 const server = new grpc.Server();
 
 const proto = grpc.loadPackageDefinition(
-  protoLoader.loadSync("../protos/service.proto", {
+  protoLoader.loadSync("./service.proto", {
     keepCase: true,
     longs: String,
     enums: String,
@@ -23,7 +23,8 @@ function parse(call) {
 
 server.addService(proto.parser.Parser.service, { parse: parse });
 
-server.bind('localhost:3001', grpc.ServerCredentials.createInsecure());
+server.bind('0.0.0.0:3001', grpc.ServerCredentials.createInsecure());
 
 server.start();
 
+console.log('Server started');

@@ -15,13 +15,14 @@ function processUrl(url) {
 
 module.exports = function parseUrl(call, db) {
   (async () => {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const url = processUrl(call.request.query);
 
     try {
       const cluster = await Cluster.launch({
         concurrency: Cluster.CONCURRENCY_CONTEXT,
         maxConcurrency: 3,
+        puppeteerOptions: {args: ['--no-sandbox', '--disable-setuid-sandbox']}
       });
 
       await cluster.task(async ({ page, data }) => {
