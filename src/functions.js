@@ -49,8 +49,6 @@ module.exports = function parseUrl(call, db) {
           db.set(info.profileLink, true);
           db.write();
           call.write(info);
-        } else {
-          console.error('already exists');
         }
       });
 
