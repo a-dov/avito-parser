@@ -1,18 +1,16 @@
 module.exports = {
   start: (fileName) => {
     const fs = require('fs');
-    const path = './' + fileName || './db.json';
+    const path = fileName || 'db.json';
 
     try {
-      if (!fs.existsSync(path)) {
-        fs.writeFileSync(fileName || 'db.json','{}', (err) => {
-          if (err) console.error('Something with your FS');
-        });
+      let content;
+      if (fs.existsSync(path)) {
+        content = fs.readFileSync(path);
       }
 
-      const content = fs.readFileSync(fileName ||"db.json");
       const obj = {};
-      obj.content = JSON.parse(content);
+      obj.content = content ? JSON.parse(content) : {};
       obj.has = function (key) {
         return !!this.content[key];
       };
@@ -23,7 +21,7 @@ module.exports = {
         this.content[id] = value;
       };
       obj.write = function () {
-        fs.writeFile(fileName || 'db.json', JSON.stringify(this.content), (err) => {
+        fs.writeFile(path, JSON.stringify(this.content), (err) => {
           if (err) console.error('Something with your FS');
         });
       };
