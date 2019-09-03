@@ -1,6 +1,6 @@
 const grpc = require('grpc');
 const protoLoader = require('@grpc/proto-loader');
-const parseUrl = require('./functions');
+const parseRequest = require('./functions');
 const { start } = require('./mydb');
 
 const db = start();
@@ -17,8 +17,8 @@ const proto = grpc.loadPackageDefinition(
   })
 );
 
-function parse(call) {
-  parseUrl(call, db);
+async function parse(call) {
+  await parseRequest(call, db);
 }
 
 server.addService(proto.parser.Parser.service, { parse: parse });
