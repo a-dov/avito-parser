@@ -17,7 +17,7 @@ const client = new proto.parser.Parser(
 );
 
 function getData() {
-  const channel = client.parse({ query: 'https://www.avito.ru/moskva_i_mo/predlozheniya_uslug?q=%D1%8D%D0%BA%D1%81%D0%BA%D0%B0%D0%B2%D0%B0%D1%82%D0%BE%D1%80' });
+  const channel = client.parse({ query: 'https://www.avito.ru/moskva_i_mo/predlozheniya_uslug/transport_perevozki?cd=1&q=%D1%81%D0%BF%D0%B5%D1%86%D1%82%D0%B5%D1%85%D0%BD%D0%B8%D0%BA%D0%B0' });
 
   channel.on("data", (message) => console.log(message));
 }

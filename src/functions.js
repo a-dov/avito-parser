@@ -1,21 +1,9 @@
 const puppeteer = require('puppeteer');
-const { Cluster } = require('puppeteer-cluster');
-
-function processUrl(url) {
-  const reg = /p=[0-9]+/;
-  const match = url.match(reg);
-
-  if (match) {
-    return url;
-  } else if (url.indexOf('?') !== -1) {
-    return url + '&p=';
-  }
-  return url + '?p=';
-}
+const {Cluster} = require('puppeteer-cluster');
+const qs = require('querystring');
 
 module.exports = async function parseRequest(call, db) {
   const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
-  const url = processUrl(call.request.query);
 
   try {
     const cluster = await Cluster.launch({
@@ -24,7 +12,7 @@ module.exports = async function parseRequest(call, db) {
       puppeteerOptions: {args: ['--no-sandbox', '--disable-setuid-sandbox']}
     });
 
-    await cluster.task(async ({ page, data }) => {
+    await cluster.task(async ({page, data}) => {
       await page.goto(data.url);
       await page.tap('.js-item-phone-button_card');
       await page.waitForSelector('.item-popup .js-item-phone-big-number img');
@@ -52,9 +40,14 @@ module.exports = async function parseRequest(call, db) {
     });
 
     const page = await browser.newPage();
+    const leftPath = call.request.query.substring(0, call.request.query.indexOf('?') + 1);
 
     for (let i = 1; i <= 100; ++i) {
-      await page.goto(url.replace('p=', 'p=' + i));
+      let url = qs.parse(call.request.query.substring(call.request.query.indexOf('?') + 1));
+      url.p = `${i}`;
+      url = qs.stringify(url);
+
+      await page.goto(leftPath + url);
 
       const hrefs = await page.evaluate(() => {
         const anchors = document.querySelectorAll('.item-description-title-link');
