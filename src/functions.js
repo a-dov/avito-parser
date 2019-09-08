@@ -9,15 +9,14 @@ module.exports = async function parseRequest(call, db) {
   const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
   logger.debug("puppeteer launched ");
 
+  const cluster = await Cluster.launch({
+    concurrency: Cluster.CONCURRENCY_CONTEXT,
+    maxConcurrency: process.env.THREADS,
+    puppeteerOptions: {args: ['--no-sandbox', '--disable-setuid-sandbox']}
+  });
+  logger.debug("cluster created with", process.env.THREADS, 'threads');
+
   try {
-    const cluster = await Cluster.launch({
-      concurrency: Cluster.CONCURRENCY_CONTEXT,
-      maxConcurrency: process.env.THREADS,
-      puppeteerOptions: {args: ['--no-sandbox', '--disable-setuid-sandbox']}
-    });
-
-    logger.debug("cluster created with", process.env.THREADS, 'threads');
-
     await cluster.task(async ({page, data}) => {
       await page.goto(data.url);
       logger.debug("link opened", data.url);
@@ -88,13 +87,12 @@ module.exports = async function parseRequest(call, db) {
         });
       }
     }
-
-    await cluster.idle();
-    await cluster.close();
   } catch (e) {
     logger.error(e);
     console.error(e);
   } finally {
+    await cluster.idle();
+    await cluster.close();
     logger.error('final step, close all');
     await browser.close();
     call.end();
