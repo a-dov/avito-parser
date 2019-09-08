@@ -67,16 +67,18 @@ module.exports = async function parseRequest(call, db) {
       url.p = `${i}`;
       url = qs.stringify(url);
 
-      logger.debug("try to open url:", leftPath + url);
-      await page.goto(leftPath + url);
-      logger.debug("successfully opened:", leftPath + url);
+      try {
+        await page.goto(leftPath + url);
+        logger.debug("url successfully opened:", leftPath + url);
+      } catch (e) {
+        console.error(e);
+      }
 
-      logger.debug("try to get links from page");
       const hrefs = await page.evaluate(() => {
         const anchors = document.querySelectorAll('.item-description-title-link');
         return [].map.call(anchors, a => a.href);
       });
-      logger.debug("successfully got:", hrefs.length, 'items');
+      logger.debug("successfully got:", hrefs.length, 'items from page');
 
       if (!hrefs) break;
 
