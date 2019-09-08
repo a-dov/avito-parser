@@ -16,9 +16,10 @@ COPY package*.json ./
 COPY ./src ./
 COPY ./protos ./
 
-RUN npm i
+RUN npm ci
 
 ENV DEBUG true
+ENV THREADS 3
 
 EXPOSE 3001
-CMD ["node", "./server.js", "DEBUG=${DEBUG}"]
+CMD ["node", "./server.js", "DEBUG=${DEBUG}", "THREADS=${THREADS}"]

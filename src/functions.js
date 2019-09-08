@@ -12,11 +12,11 @@ module.exports = async function parseRequest(call, db) {
   try {
     const cluster = await Cluster.launch({
       concurrency: Cluster.CONCURRENCY_CONTEXT,
-      maxConcurrency: 1,
+      maxConcurrency: process.env.THREADS,
       puppeteerOptions: {args: ['--no-sandbox', '--disable-setuid-sandbox']}
     });
 
-    logger.debug("cluster created");
+    logger.debug("cluster created with", process.env.THREADS, 'threads');
 
     await cluster.task(async ({page, data}) => {
       await page.goto(data.url);
