@@ -18,5 +18,7 @@ COPY ./protos ./
 
 RUN npm i
 
+ENV DEBUG true
+
 EXPOSE 3001
-CMD ["node", "./server.js"]
+CMD ["node", "./server.js", "DEBUG=${DEBUG}"]

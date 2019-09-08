@@ -2,7 +2,6 @@ const grpc = require('grpc');
 const protoLoader = require('@grpc/proto-loader');
 const parseRequest = require('./functions');
 const { start } = require('./mydb');
-
 const db = start();
 
 const server = new grpc.Server();
