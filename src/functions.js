@@ -27,7 +27,6 @@ module.exports = async function parseRequest(call, db) {
       logger.debug("there is selector", '.item-popup .js-item-phone-big-number img');
 
       const info = await page.evaluate(() => {
-        logger.debug("evaluate page started");
 
         const sellerProfileLink = document.querySelector('.js-seller-info-name a');
         const phoneImg = document.querySelector('.item-popup .js-item-phone-big-number img');
@@ -35,7 +34,6 @@ module.exports = async function parseRequest(call, db) {
         const price = document.querySelector('.js-item-price');
         const description = document.querySelector('.item-description-text p');
 
-        logger.debug("all info received");
         return {
           title: title.innerText,
           price: price ? price.getAttribute('content') : 'Цена не указана',
@@ -45,6 +43,8 @@ module.exports = async function parseRequest(call, db) {
           phoneImage: phoneImg ? phoneImg.src : '',
         };
       });
+
+      logger.debug("info from evaluate", info);
 
       if (!db.has(info.profileLink)) {
         logger.debug("set profile to db");
