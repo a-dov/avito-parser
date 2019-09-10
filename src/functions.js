@@ -25,35 +25,43 @@ module.exports = async function parseRequest(call, db) {
       await page.waitForSelector('.item-popup .js-item-phone-big-number img');
       logger.debug("there is selector", '.item-popup .js-item-phone-big-number img');
 
-      const info = await page.evaluate(() => {
+      try {
+        const info = await page.evaluate(() => {
+          const sellerProfileLink = document.querySelector('.js-seller-info-name a');
+          const phoneImg = document.querySelector('.item-popup .js-item-phone-big-number img');
+          const title = document.querySelector('.title-info-title-text');
+          const price = document.querySelector('.js-item-price');
+          const description = document.querySelector('.item-description-text p');
 
-        const sellerProfileLink = document.querySelector('.js-seller-info-name a');
-        const phoneImg = document.querySelector('.item-popup .js-item-phone-big-number img');
-        const title = document.querySelector('.title-info-title-text');
-        const price = document.querySelector('.js-item-price');
-        const description = document.querySelector('.item-description-text p');
+          return {
+            title: title.innerText,
+            description: description ? description.innerText : '',
+            contact: {
+              name: sellerProfileLink ? sellerProfileLink.innerText : '',
+              phoneImage: phoneImg ? phoneImg.src : '',
+            },
+            price: price ? price.getAttribute('content') : 'Цена не указана',
+            profileLink: sellerProfileLink ? sellerProfileLink.href : '',
+          };
+        });
 
-        return {
-          title: title.innerText,
-          price: price ? price.getAttribute('content') : 'Цена не указана',
-          description: description ? description.innerText : '',
-          profileLink: sellerProfileLink ? sellerProfileLink.href : '',
-          name: sellerProfileLink ? sellerProfileLink.innerText : '',
-          phoneImage: phoneImg ? phoneImg.src : '',
-        };
-      });
+        info.id = data ? data.url : '';
+        info.link = data ? data.url : '';
 
-      logger.debug("info from evaluate", info);
+        logger.debug("info from evaluate", info);
 
-      if (!db.has(info.profileLink)) {
-        logger.debug("set profile to db");
-        db.set(info.profileLink, true);
-        logger.debug("write to db");
-        db.write();
-        logger.debug("write to channel");
-        call.write(info);
-      } else {
-        logger.debug("this profile already exists");
+        if (!db.has(info.profileLink)) {
+          logger.debug("set profile to db");
+          db.set(info.profileLink, true);
+          logger.debug("write to db");
+          db.write();
+          logger.debug("write to channel");
+          call.write(info);
+        } else {
+          logger.debug("this profile already exists");
+        }
+      } catch (e) {
+        logger.error(e);
       }
     });
 
@@ -62,7 +70,7 @@ module.exports = async function parseRequest(call, db) {
 
     const leftPath = call.request.query.substring(0, call.request.query.indexOf('?') + 1);
 
-    for (let i = 1; i <= 100; ++i) {
+    for (let i = 1; i <= 1; ++i) {
       let url = qs.parse(call.request.query.substring(call.request.query.indexOf('?') + 1));
       url.p = `${i}`;
       url = qs.stringify(url);
