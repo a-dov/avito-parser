@@ -18,12 +18,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/DmitryDorofeev/tobelease-parser.git"
+    "url": "git+ssh://git@github.com:Dagger00/avito-parser.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://gitlab.com/DmitryDorofeev/tobelease-parser/issues"
+    "url": "https://github.com/Dagger00/avito-parser/issues"
   },
-  "homepage": "https://gitlab.com/DmitryDorofeev/tobelease-parser#readme"
+  "homepage": "https://github.com/Dagger00/avito-parser#readme"
 }
